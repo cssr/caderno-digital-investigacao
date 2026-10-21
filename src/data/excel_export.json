@@ -1,0 +1,330 @@
+{
+  "LEITURAS": [
+    {
+      "ID": "L001",
+      "AUTOR(ES)": "Rui Canário",
+      "ANO": 2013,
+      "TÍTULO / TEXTO": "Educação de adultos: Um campo e uma problemática",
+      "REFERÊNCIA APA 7*": "Canário, R. (2013). Educação de adultos: Um campo e uma problemática. EDUCA.",
+      "PROBLEMÁTICA (PROVISÓRIA)": "Como compreender a diversidade da educação de adultos e construir uma problemática própria, sem reduzir a aprendizagem dos adultos ao modelo escolar?",
+      "TESE / IDEIA CENTRAL (PROVISÓRIA)": "A educação de adultos é um campo plural que exige questionar a forma escolar, valorizar a experiência e reconhecer a singularidade dos percursos e a participação ativa dos adultos na formação.",
+      "ESTADO": "Em leitura",
+      "FONTE / LINK": "PDF do livro (edição de 2013)",
+      "CONFERÊNCIAS": "Edição confirmada pelo próprio PDF: 1.ª edição, 4.ª impressão, março de 2013."
+    },
+    {
+      "ID": "L002",
+      "AUTOR(ES)": "António Nóvoa",
+      "ANO": 2013,
+      "TÍTULO / TEXTO": "Prefácio a Educação de adultos: Um campo e uma problemática",
+      "REFERÊNCIA APA 7*": "Nóvoa, A. (2013). Prefácio. In R. Canário, Educação de adultos: Um campo e uma problemática (pp. 3–7). EDUCA.",
+      "PROBLEMÁTICA (PROVISÓRIA)": "Como pode a educação de adultos ajudar a criticar a distância entre os saberes escolarmente consagrados e os saberes construídos ao longo da vida?",
+      "TESE / IDEIA CENTRAL (PROVISÓRIA)": "A educação de adultos ganha sentido como crítica ao modelo escolar e como valorização dos saberes da experiência, da reflexão pessoal e coletiva e da participação dos adultos.",
+      "ESTADO": "A reler",
+      "FONTE / LINK": "Prefácio integrado no PDF de Canário",
+      "CONFERÊNCIAS": "O prefácio está datado de 31 de janeiro de 1999, mas esta referência corresponde à edição consultada de 2013."
+    },
+    {
+      "ID": "L003",
+      "AUTOR(ES)": "Carmen Cavaco",
+      "ANO": 2007,
+      "TÍTULO / TEXTO": "Reconhecimento e validação de adquiridos experienciais – A emergência de actividades profissionais na educação de adultos",
+      "REFERÊNCIA APA 7*": "Cavaco, C. (2007). Reconhecimento e validação de adquiridos experienciais – A emergência de actividades profissionais na educação de adultos. Revista Portuguesa de Pedagogia, 41(3), 133–150. https://doi.org/10.14195/1647-8614_41-3_6",
+      "PROBLEMÁTICA (PROVISÓRIA)": "Que atividades profissionais emergem dos processos de reconhecimento e validação de adquiridos experienciais? Que tensões surgem quando aprendizagens da vida são formalizadas com referenciais de lógica escolar?",
+      "TESE / IDEIA CENTRAL (PROVISÓRIA)": "A complexidade do RVCC produz novas exigências profissionais: favorece a emergência do profissional de reconhecimento e validação e transforma o papel dos formadores, tornando decisivas as práticas das equipas para a qualidade e a equidade.",
+      "ESTADO": "A reler",
+      "FONTE / LINK": "https://doi.org/10.14195/1647-8614_41-3_6",
+      "CONFERÊNCIAS": "Referência verificada no sítio da Revista Portuguesa de Pedagogia."
+    },
+    {
+      "ID": "L004",
+      "AUTOR(ES)": "Brian Street",
+      "ANO": 2003,
+      "TÍTULO / TEXTO": "What's 'new' in New Literacy Studies? Critical approaches to literacy in theory and practice",
+      "REFERÊNCIA APA 7*": "Street, B. (2003). What's 'new' in New Literacy Studies? Critical approaches to literacy in theory and practice. Current Issues in Comparative Education, 5(2), 77–91.",
+      "PROBLEMÁTICA (PROVISÓRIA)": "Como compreender as literacias para além de competências técnicas supostamente universais, atendendo às práticas locais, aos contextos sociais e às relações de poder?",
+      "TESE / IDEIA CENTRAL (PROVISÓRIA)": "As literacias são práticas sociais situadas, atravessadas por relações de poder; estudá-las exige superar conceções autónomas e aproximar a investigação das práticas e das políticas concretas.",
+      "ESTADO": "A reler",
+      "FONTE / LINK": "https://kclpure.kcl.ac.uk/portal/en/publications/whats-new-in-new-literacy-studies-critical-approaches-to-literacy-in-theory-and-practice%289e5cb649-71d8-4244-9789-9c9aeb44a447%29.html",
+      "CONFERÊNCIAS": "Referência verificada no repositório do King's College London."
+    },
+    {
+      "ID": "L005",
+      "AUTOR(ES)": "K. Messiou e colaboradores",
+      "ANO": 2025,
+      "TÍTULO / TEXTO": "Student voice for promoting inclusion in primary schools",
+      "REFERÊNCIA APA 7*": "Messiou, K., de los Reyes, J., Potnis, C., Dong, P., & Rwang, V. K. (2025). Student voice for promoting inclusion in primary schools. International Journal of Inclusive Education, 29(7), 1168–1182. https://doi.org/10.1080/13603116.2024.2317729",
+      "PROBLEMÁTICA (PROVISÓRIA)": "Como pode o envolvimento com as vozes das crianças promover a inclusão nas escolas do primeiro ciclo?",
+      "TESE / IDEIA CENTRAL (PROVISÓRIA)": "A voz dos alunos pode promover inclusão quando há atividades participativas, diálogo que valoriza o que dizem e mudança efetiva das práticas, acompanhados de abertura dos adultos.",
+      "ESTADO": "A reler",
+      "FONTE / LINK": "https://doi.org/10.1080/13603116.2024.2317729",
+      "CONFERÊNCIAS": "Ano da edição em volume: 2025; publicação antecipada online em 2024."
+    },
+    {
+      "ID": "L006",
+      "AUTOR(ES)": "Mel Ainscow",
+      "ANO": 2026,
+      "TÍTULO / TEXTO": "Inclusion and equity in education: Pathways for reform",
+      "REFERÊNCIA APA 7*": "Ainscow, M. (2026). Inclusion and equity in education: Pathways for reform. In R. Ingram (Ed.), Inclusive and equitable education for all: SDG 4 and global challenges. Palgrave Macmillan.",
+      "PROBLEMÁTICA (PROVISÓRIA)": "Como podem os sistemas educativos transformar as suas políticas e práticas para promover inclusão e equidade, ultrapassando explicações centradas nas características dos alunos?",
+      "TESE / IDEIA CENTRAL (PROVISÓRIA)": "A inclusão e a equidade exigem reformas sistémicas: identificar barreiras contextuais, envolver profissionais, alunos e comunidades, reforçar parcerias e usar evidências para melhorar participação e aprendizagens.",
+      "ESTADO": "A reler",
+      "FONTE / LINK": "PDF do capítulo para o livro organizado por Richard Ingram (2026)",
+      "CONFERÊNCIAS": "Referência APA provisória: o PDF identifica o livro e a editora, mas falta confirmar paginação e edição publicada."
+    },
+    {
+      "ID": "* Referências em texto simples no Excel. Na bibliografia final, os títulos de livros e revistas/volumes deverão ser apresentados em itálico, conforme APA 7."
+    }
+  ],
+  "POR LER": [
+    {
+      "ID": "P001",
+      "AUTOR(ES) / FICHEIRO": "Calha",
+      "ANO*": 2017,
+      "TÍTULO OU NOME VISÍVEL DO FICHEIRO": "Calha2017_O uso da autobiografia na ed...",
+      "ORIGEM": "Recorte — artigos guardados",
+      "ESTADO": "Por ler",
+      "A CONFIRMAR": "Título do ficheiro truncado no recorte; completar com o PDF."
+    },
+    {
+      "ID": "P002",
+      "AUTOR(ES) / FICHEIRO": "Cardim, Teixeira e Fernandes",
+      "ANO*": 2026,
+      "TÍTULO OU NOME VISÍVEL DO FICHEIRO": "Cardim, Teixeira e Fernandes2026_Motiva...",
+      "ORIGEM": "Recorte — artigos guardados",
+      "ESTADO": "Por ler",
+      "A CONFIRMAR": "Título do ficheiro truncado no recorte; completar com o PDF."
+    },
+    {
+      "ID": "P003",
+      "AUTOR(ES) / FICHEIRO": "Dionísio, Castro e Silva",
+      "TÍTULO OU NOME VISÍVEL DO FICHEIRO": "Dionísio, Castro e Silva_A relação com o ...",
+      "ORIGEM": "Recorte — artigos guardados",
+      "ESTADO": "Por ler",
+      "A CONFIRMAR": "Título do ficheiro truncado no recorte; completar com o PDF."
+    },
+    {
+      "ID": "P004",
+      "AUTOR(ES) / FICHEIRO": "Paulos",
+      "ANO*": 2022,
+      "TÍTULO OU NOME VISÍVEL DO FICHEIRO": "Paulos2022_A formação de educadores d...",
+      "ORIGEM": "Recorte — artigos guardados",
+      "ESTADO": "Por ler",
+      "A CONFIRMAR": "Título do ficheiro truncado no recorte; completar com o PDF."
+    },
+    {
+      "ID": "P005",
+      "AUTOR(ES) / FICHEIRO": "Radtke and Rummel",
+      "ANO*": 2025,
+      "TÍTULO OU NOME VISÍVEL DO FICHEIRO": "Radtke and Rummel2025_IA e perceção d...",
+      "ORIGEM": "Recorte — artigos guardados",
+      "ESTADO": "Por ler",
+      "A CONFIRMAR": "Título do ficheiro truncado no recorte; completar com o PDF."
+    },
+    {
+      "ID": "P006",
+      "AUTOR(ES) / FICHEIRO": "Rambharose",
+      "ANO*": 2025,
+      "TÍTULO OU NOME VISÍVEL DO FICHEIRO": "Rambharose2025_Exploring the role of ar...",
+      "ORIGEM": "Recorte — artigos guardados",
+      "ESTADO": "Por ler",
+      "A CONFIRMAR": "Título do ficheiro truncado no recorte; completar com o PDF."
+    },
+    {
+      "ID": "P007",
+      "AUTOR(ES) / FICHEIRO": "Savvidou",
+      "TÍTULO OU NOME VISÍVEL DO FICHEIRO": "Savvidou_Negotiating Generative AI-Assi...",
+      "ORIGEM": "Recorte — artigos guardados",
+      "ESTADO": "Por ler",
+      "A CONFIRMAR": "Título do ficheiro truncado no recorte; completar com o PDF."
+    },
+    {
+      "ID": "P008",
+      "AUTOR(ES) / FICHEIRO": "Slimi",
+      "ANO*": 2026,
+      "TÍTULO OU NOME VISÍVEL DO FICHEIRO": "Slimi2026_A systematic critical review of ...",
+      "ORIGEM": "Recorte — artigos guardados",
+      "ESTADO": "Por ler",
+      "A CONFIRMAR": "Título do ficheiro truncado no recorte; completar com o PDF."
+    },
+    {
+      "ID": "P009",
+      "AUTOR(ES) / FICHEIRO": "Snyman",
+      "ANO*": 2017,
+      "TÍTULO OU NOME VISÍVEL DO FICHEIRO": "Snyman2017_The Significance of the Lear...",
+      "ORIGEM": "Recorte — artigos guardados",
+      "ESTADO": "Por ler",
+      "A CONFIRMAR": "Título do ficheiro truncado no recorte; completar com o PDF."
+    },
+    {
+      "ID": "P010",
+      "AUTOR(ES) / FICHEIRO": "Wang, Rowsell and Liang",
+      "ANO*": 2026,
+      "TÍTULO OU NOME VISÍVEL DO FICHEIRO": "Wang, Rowsell and Liang(2026)_Towards...",
+      "ORIGEM": "Recorte — artigos guardados",
+      "ESTADO": "Por ler",
+      "A CONFIRMAR": "Título do ficheiro truncado no recorte; completar com o PDF."
+    },
+    {
+      "ID": "P011",
+      "AUTOR(ES) / FICHEIRO": "Watson, Brezovec e Romic",
+      "ANO*": 2025,
+      "TÍTULO OU NOME VISÍVEL DO FICHEIRO": "Watson, Brezovec e Romic2025_O concei...",
+      "ORIGEM": "Recorte — artigos guardados",
+      "ESTADO": "Por ler",
+      "A CONFIRMAR": "Título do ficheiro truncado no recorte; completar com o PDF."
+    },
+    {
+      "ID": "P012",
+      "AUTOR(ES) / FICHEIRO": "Wu",
+      "ANO*": 2026,
+      "TÍTULO OU NOME VISÍVEL DO FICHEIRO": "Wu2026_From integrity to identity.pdf",
+      "ORIGEM": "Recorte — artigos guardados",
+      "ESTADO": "Por ler",
+      "A CONFIRMAR": "Título do ficheiro truncado no recorte; completar com o PDF."
+    },
+    {
+      "ID": "P013",
+      "AUTOR(ES) / FICHEIRO": "David Labaree",
+      "TÍTULO OU NOME VISÍVEL DO FICHEIRO": "A Sermon on Educational Research",
+      "ORIGEM": "Conversas anteriores",
+      "ESTADO": "Por ler",
+      "A CONFIRMAR": "Confirmar a obra/edição antes de construir a referência APA 7."
+    },
+    {
+      "ID": "P014",
+      "AUTOR(ES) / FICHEIRO": "António Nóvoa",
+      "TÍTULO OU NOME VISÍVEL DO FICHEIRO": "Carta a um jovem investigador em Educação (título a confirmar)",
+      "ORIGEM": "Conversas anteriores",
+      "ESTADO": "Por ler",
+      "A CONFIRMAR": "Confirmar a obra/edição antes de construir a referência APA 7."
+    },
+    {
+      "ID": "P015",
+      "AUTOR(ES) / FICHEIRO": "John Dewey",
+      "TÍTULO OU NOME VISÍVEL DO FICHEIRO": "Obra ou artigo a selecionar",
+      "ORIGEM": "Conversas anteriores",
+      "ESTADO": "Por ler",
+      "A CONFIRMAR": "Confirmar a obra/edição antes de construir a referência APA 7."
+    },
+    {
+      "ID": "P016",
+      "AUTOR(ES) / FICHEIRO": "Hervé Breton",
+      "TÍTULO OU NOME VISÍVEL DO FICHEIRO": "Obra ou artigo a selecionar",
+      "ORIGEM": "Conversas anteriores",
+      "ESTADO": "Por ler",
+      "A CONFIRMAR": "Confirmar a obra/edição antes de construir a referência APA 7."
+    },
+    {
+      "ID": "P017",
+      "AUTOR(ES) / FICHEIRO": "Umberto Eco",
+      "ANO*": 2015,
+      "TÍTULO OU NOME VISÍVEL DO FICHEIRO": "Como se faz uma tese em ciências humanas",
+      "ORIGEM": "Conversas anteriores",
+      "ESTADO": "Por ler",
+      "A CONFIRMAR": "Confirmar a obra/edição antes de construir a referência APA 7."
+    },
+    {
+      "ID": "P018",
+      "AUTOR(ES) / FICHEIRO": "Raymond Quivy e Luc Van Campenhoudt",
+      "ANO*": 2019,
+      "TÍTULO OU NOME VISÍVEL DO FICHEIRO": "Manual de investigação em ciências sociais (5.ª ed.)",
+      "ORIGEM": "Conversas anteriores",
+      "ESTADO": "Por ler",
+      "A CONFIRMAR": "Confirmar a obra/edição antes de construir a referência APA 7."
+    },
+    {
+      "ID": "P019",
+      "AUTOR(ES) / FICHEIRO": "Autor(es) por confirmar",
+      "TÍTULO OU NOME VISÍVEL DO FICHEIRO": "Who is the Author? Negotiating Authorial Identity in GenAI-Mediated Writing",
+      "ORIGEM": "Conversas anteriores",
+      "ESTADO": "Por ler",
+      "A CONFIRMAR": "Confirmar a obra/edição antes de construir a referência APA 7."
+    },
+    {
+      "ID": "* O ano resulta do nome do ficheiro quando visível; não equivale ainda a verificação bibliográfica."
+    }
+  ],
+  "COORIENTADORES": [
+    {
+      "NOME DA PASTA": "Billett",
+      "ESTADO": "Por explorar",
+      "NOTAS / CONTACTO": "Pasta indicada no teu recorte."
+    },
+    {
+      "NOME DA PASTA": "Breton",
+      "ESTADO": "Por explorar",
+      "NOTAS / CONTACTO": "Pasta indicada no teu recorte; também há leituras possíveis."
+    },
+    {
+      "NOME DA PASTA": "Elizeu Souza",
+      "ESTADO": "Por explorar",
+      "NOTAS / CONTACTO": "Pasta indicada no teu recorte."
+    },
+    {
+      "NOME DA PASTA": "Fejes e Andersson",
+      "ESTADO": "Por explorar",
+      "NOTAS / CONTACTO": "Pasta com dois nomes; avaliar individualmente."
+    },
+    {
+      "NOME DA PASTA": "Rémery",
+      "ESTADO": "Por explorar",
+      "NOTAS / CONTACTO": "Pasta indicada no teu recorte."
+    },
+    {
+      "NOME DA PASTA": "Seongyong Lee",
+      "ESTADO": "Por explorar",
+      "NOTAS / CONTACTO": "Pasta indicada no teu recorte."
+    }
+  ],
+  "LEGENDA": [
+    {
+      "MARCAÇÃO NO WORD": "Sublinhado (linha)",
+      "PARA QUE SERVE": "Possíveis conceitos a explorar",
+      "COMO REGISTAR AQUI": "NOTAS NOVAS → «Conceito a explorar»",
+      "NOTA": "Não implica que o conceito seja teu."
+    },
+    {
+      "MARCAÇÃO NO WORD": "Sublinhado amarelo",
+      "PARA QUE SERVE": "Ideias principais do texto",
+      "COMO REGISTAR AQUI": "NOTAS NOVAS → «Síntese minha» (ou «Citação literal», se transcreveres)",
+      "NOTA": "O amarelo indica importância, não autoria."
+    },
+    {
+      "MARCAÇÃO NO WORD": "Azul",
+      "PARA QUE SERVE": "Ideia repetida em vários documentos",
+      "COMO REGISTAR AQUI": "NOTAS NOVAS → «Relações com outros textos»",
+      "NOTA": "Indica os IDs de leitura associados."
+    },
+    {
+      "MARCAÇÃO NO WORD": "Letra 8",
+      "PARA QUE SERVE": "Contextualização",
+      "COMO REGISTAR AQUI": "NOTAS NOVAS → «Contextualização»",
+      "NOTA": "Opcional; não tem de entrar na tese."
+    },
+    {
+      "MARCAÇÃO NO WORD": "Verde",
+      "PARA QUE SERVE": "Notas que escreveste no livro para resumir",
+      "COMO REGISTAR AQUI": "NOTAS NOVAS → «Síntese minha»",
+      "NOTA": "Não confundir com «Reflexão minha»."
+    },
+    {
+      "MARCAÇÃO NO WORD": "[REFLEXÃO MINHA] (opcional)",
+      "PARA QUE SERVE": "Perguntas, críticas e associações originais",
+      "COMO REGISTAR AQUI": "NOTAS NOVAS → «Reflexão minha» ou «Pergunta minha»",
+      "NOTA": "Uma convenção nova, só se te ajudar."
+    },
+    {
+      "MARCAÇÃO NO WORD": "Citação literal",
+      "PARA QUE SERVE": "Palavras reproduzidas de outro texto",
+      "COMO REGISTAR AQUI": "NOTAS NOVAS → «Citação literal», com página",
+      "NOTA": "Confirmar autor original, edição e página."
+    },
+    {
+      "MARCAÇÃO NO WORD": "Contagem de autores",
+      "PARA QUE SERVE": "Número de menções de um autor num texto",
+      "COMO REGISTAR AQUI": "AUTORES CITADOS → uma linha por autor e por obra",
+      "NOTA": "Começar a contagem de novo nos textos originais."
+    }
+  ]
+}
