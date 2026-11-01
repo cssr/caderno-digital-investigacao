@@ -2,6 +2,7 @@
 // Import / Export: JSON full backup + per-sheet CSV.
 // ============================================================================
 import { db } from '../db'
+import { getSettings } from './settings'
 import type { CollectionName } from '../types'
 import { toCsvLine, fromCsvLine, download } from '../utils'
 import type { Table } from 'dexie'
@@ -96,11 +97,13 @@ export async function buildJSONBackup(): Promise<string> {
   for (const sheet of SHEETS) {
     payload[sheet.label] = await db[sheet.name].toArray()
   }
+  const settings = await getSettings()
   const backup = {
     app: 'caderno-digital-investigacao',
     version: 1,
     exported_at: new Date().toISOString(),
     data: payload,
+    settings: { themes: settings.themes, relevance_levels: settings.relevance_levels },
   }
   return JSON.stringify(backup, null, 2)
 }
@@ -145,6 +148,15 @@ export async function importJSONBackup(json: string): Promise<{ imported: Record
     const mapped = rows.map((r: any) => ({ ...r, created_at: r.created_at ?? now, updated_at: r.updated_at ?? now }))
     await table.bulkAdd(mapped)
     imported[sheet.label] = mapped.length
+  }
+  if (data.settings) {
+    const saved = await getSettings()
+    await db.settings.put({
+      id: saved.id,
+      themes: Array.isArray(data.settings.themes) ? data.settings.themes : saved.themes,
+      relevance_levels: Array.isArray(data.settings.relevance_levels) ? data.settings.relevance_levels : saved.relevance_levels,
+      updated_at: new Date().toISOString(),
+    })
   }
   return { imported }
 }

@@ -20,6 +20,8 @@ export interface Leitura extends Timestamps {
   estado: string
   fonte_link: string
   conferencias: string
+  tema: string
+  relevancia: string
 }
 
 // ---- NOTAS NOVAS (New notes, linked to a reading) ----
@@ -136,6 +138,15 @@ export type CollectionName = 'leituras' | 'notas_novas' | 'autores_citados' | 'p
 
 export type AnyRecord = Leitura | NotaNova | AutorCitado | PorLer | Coorientador | Tarefa
 
+// ---- APP SETTINGS (site-wide, user-configured) ----
+// Themes group readings; relevance_levels rate each reading's importance.
+export interface AppSettings {
+  id: string
+  themes: string[]
+  relevance_levels: string[]
+  updated_at: string
+}
+
 
 // ---- COLUMN DEFINITIONS (used for table rendering + CSV export) ----
 export interface ColumnDef {
@@ -155,6 +166,8 @@ export const LEITURA_COLUMNS: ColumnDef[] = [
   { key: 'estado', label: 'Estado', type: 'text' },
   { key: 'fonte_link', label: 'Fonte / Link', type: 'text' },
   { key: 'conferencias', label: 'Conferências', type: 'text' },
+  { key: 'tema', label: 'Tema', type: 'text' },
+  { key: 'relevancia', label: 'Relevância', type: 'text' },
 ]
 
 export const NOTAS_NOVAS_COLUMNS: ColumnDef[] = [

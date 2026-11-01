@@ -47,6 +47,8 @@ export const LEITURA_CONFIG: CollectionConfig = {
     { key: 'estado', label: 'Estado', type: 'select', options: [...LEITURA_ESTADOS] },
     { key: 'fonte_link', label: 'Fonte / Link', type: 'link' },
     { key: 'conferencias', label: 'Conferências', type: 'textarea' },
+    { key: 'tema', label: 'Tema', type: 'text' },
+    { key: 'relevancia', label: 'Relevância', type: 'text' },
   ],
 }
 

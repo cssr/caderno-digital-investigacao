@@ -11,10 +11,12 @@ import CollectionManager from './components/CollectionManager'
 import Tasks from './components/Tasks'
 import DataHub from './components/DataHub'
 import LegendasView from './components/LegendasView'
+import LeiturasView from './components/LeiturasView'
+import SiteSettings from './components/SiteSettings'
 import type { CollectionName } from './types'
-import { LayoutDashboard, BookOpen, StickyNote, Users, ListChecks, Target, FileText, CheckCircle2, HardDrive, Menu, X } from 'lucide-react'
+import { LayoutDashboard, BookOpen, StickyNote, Users, ListChecks, Target, FileText, CheckCircle2, HardDrive, Menu, X, Settings } from 'lucide-react'
 
-type Section = 'dashboard' | 'legendas' | (typeof COLLECTIONS)[number] | 'tarefas' | 'datahub'
+type Section = 'dashboard' | 'legendas' | (typeof COLLECTIONS)[number] | 'tarefas' | 'datahub' | 'settings'
 
 const NAV: { id: Section; label: string; icon: React.ReactNode }[] = [
   { id: 'dashboard', label: 'Painel', icon: <LayoutDashboard className="h-4 w-4" /> },
@@ -26,6 +28,7 @@ const NAV: { id: Section; label: string; icon: React.ReactNode }[] = [
   { id: 'legendas', label: 'Legendas', icon: <FileText className="h-4 w-4" /> },
   { id: 'tarefas', label: 'Tarefas', icon: <CheckCircle2 className="h-4 w-4" /> },
   { id: 'datahub', label: 'Backup', icon: <HardDrive className="h-4 w-4" /> },
+  { id: 'settings', label: 'Configurações', icon: <Settings className="h-4 w-4" /> },
 ]
 
 const COLUMNS: Record<string, typeof LEITURA_COLUMNS> = {
@@ -106,7 +109,9 @@ export default function App() {
             {section === 'tarefas' && <Tasks />}
             {section === 'datahub' && <DataHub />}
             {section === 'legendas' && <LegendasView />}
-            {(section !== 'dashboard' && section !== 'legendas' && section !== 'tarefas' && section !== 'datahub') && (
+            {section === 'settings' && <SiteSettings />}
+            {section === 'leituras' && <LeiturasView />}
+            {(section !== 'dashboard' && section !== 'legendas' && section !== 'tarefas' && section !== 'datahub' && section !== 'settings' && section !== 'leituras') && (
   <CollectionManager config={getConfig(section as CollectionName)!} columns={COLUMNS[section]} />
 )}
           </main>

@@ -167,7 +167,7 @@ function FieldInput({ field, initial }: {
         <input
           type="url"
           name={field.key}
-          value={initial ?? ''}
+          defaultValue={initial ?? ''}
           placeholder="https://…"
           className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500"
         />
@@ -175,14 +175,14 @@ function FieldInput({ field, initial }: {
         <input
           type="date"
           name={field.key}
-          value={initial ? formatDate(initial) : ''}
+          defaultValue={initial ? formatDate(initial) : ''}
           className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500"
         />
       ) : (
         <input
           type={field.type === 'number' ? 'number' : 'text'}
           name={field.key}
-          value={initial ?? ''}
+          defaultValue={initial ?? ''}
           className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500"
         />
       )}

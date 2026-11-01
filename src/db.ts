@@ -7,6 +7,7 @@ import type {
   Coorientador,
   Legenda,
   Tarefa,
+  AppSettings,
   CollectionName,
 } from './types'
 
@@ -18,18 +19,20 @@ interface CadernoDB {
   coorientadores: Table<Coorientador, string>
   legendas: Table<Legenda, string>
   tarefas: Table<Tarefa, string>
+  settings: Table<AppSettings, string>
 }
 
 const raw = new Dexie('CadernoInvestigacaoDB')
 
-raw.version(1).stores({
-  leituras: 'id',
+raw.version(2).stores({
+  leituras: 'id, tema, relevancia',
   notas_novas: 'id, id_leitura',
   autores_citados: 'id, id_leitura',
   por_ler: 'id',
   coorientadores: 'id',
   legendas: 'id',
   tarefas: 'id, category',
+  settings: 'id',
 })
 
 export const db = raw as unknown as CadernoDB
