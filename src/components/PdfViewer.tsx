@@ -142,14 +142,13 @@ export default function PdfViewer({ reading, pdf, annotations, onSave, onUpdate,
     const overlay = overlayRefs.current[pageNumber]
     if (!overlay) return
     const rect = overlay.getBoundingClientRect()
-    const x1 = toPercent(e.clientX - rect.left, rect.width)
-    const y1 = toPercent(e.clientY - rect.top, rect.height)
+    // Start point (stored in percent at mousedown) vs. current end point.
     const x2 = toPercent(e.clientX - rect.left, rect.width)
     const y2 = toPercent(e.clientY - rect.top, rect.height)
-    const rx = Math.min(x1, x2)
-    const ry = Math.min(y1, y2)
-    const rw = Math.abs(x2 - x1)
-    const rh = Math.abs(y2 - y1)
+    const rx = Math.min(drawing.x1, x2)
+    const ry = Math.min(drawing.y1, y2)
+    const rw = Math.abs(x2 - drawing.x1)
+    const rh = Math.abs(y2 - drawing.y1)
     setDrawing(null)
     if (rw < 0.5 || rh < 0.5) return
     const ann: PdfAnnotation = {
