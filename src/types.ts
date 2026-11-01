@@ -146,9 +146,9 @@ export const ORIGEM_OPTIONS = [
 
 // Human-readable labels for task categories
 export const TASK_CATEGORY_LABELS: Record<TaskCategory, string> = {
-  todo: 'To-do',
-  ongoing: 'On-going',
-  complete: 'Complete',
+  todo: 'A Fazer',
+  ongoing: 'Em Andamento',
+  complete: 'Concluído',
 }
 
 export const TASK_PRIORITY_LABELS: Record<TaskPriority, string> = {
@@ -157,7 +157,7 @@ export const TASK_PRIORITY_LABELS: Record<TaskPriority, string> = {
   alta: 'Alta',
 }
 
-export type CollectionName = 'leituras' | 'notas_novas' | 'autores_citados' | 'por_ler' | 'coorientadores' | 'legendas' | 'tarefas'
+export type CollectionName = 'leituras' | 'notas_novas' | 'autores_citados' | 'por_ler' | 'legendas' | 'tarefas'
 
 export type AnyRecord = Leitura | NotaNova | AutorCitado | PorLer | Coorientador | Tarefa
 

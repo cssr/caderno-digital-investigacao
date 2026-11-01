@@ -76,7 +76,7 @@ export default function Tasks() {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold text-slate-800">Gestão de Tarefas</h1>
-          <p className="text-sm text-slate-500">Itens organizados em To-do, On-going e Complete.</p>
+          <p className="text-sm text-slate-500">Itens organizados em A Fazer, Em Andamento e Concluído.</p>
         </div>
         <div className="flex items-center gap-3">
           <div className="relative max-w-xs flex-1">

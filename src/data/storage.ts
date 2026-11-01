@@ -11,11 +11,9 @@ import {
   NOTAS_NOVAS_COLUMNS,
   AUTORES_CITADOS_COLUMNS,
   POR_LER_COLUMNS,
-  COORIENTADOR_COLUMNS,
   TAREFA_COLUMNS,
   LEITURA_ESTADOS,
   POR_LER_ESTADOS,
-  COORIENTADOR_ESTADOS,
   A_CONFIRMAR_OPTIONS,
   ORIGEM_OPTIONS,
 } from '../types'
@@ -55,13 +53,6 @@ const SHEETS: SheetMeta[] = [
     columns: POR_LER_COLUMNS,
     numericKeys: ['ano'],
     optionKeys: { origem: ORIGEM_OPTIONS as unknown as readonly string[], estado: POR_LER_ESTADOS as unknown as readonly string[] },
-  },
-  {
-    name: 'coorientadores',
-    label: 'COORIENTADORES',
-    columns: COORIENTADOR_COLUMNS,
-    numericKeys: [],
-    optionKeys: { estado: COORIENTADOR_ESTADOS as unknown as readonly string[] },
   },
   {
     name: 'tarefas',

@@ -4,20 +4,19 @@ import { COLLECTIONS } from './db'
 import { getConfig } from './components/fields'
 import {
   LEITURA_COLUMNS, NOTAS_NOVAS_COLUMNS, AUTORES_CITADOS_COLUMNS,
-  POR_LER_COLUMNS, COORIENTADOR_COLUMNS,
+  POR_LER_COLUMNS,
 } from './types'
 import Dashboard from './components/Dashboard'
 import CollectionManager from './components/CollectionManager'
 import Tasks from './components/Tasks'
 import DataHub from './components/DataHub'
-import LegendasView from './components/LegendasView'
 import NotasView from './components/NotasView'
 import LeiturasView from './components/LeiturasView'
 import SiteSettings from './components/SiteSettings'
 import type { CollectionName } from './types'
-import { LayoutDashboard, BookOpen, StickyNote, Users, ListChecks, Target, FileText, CheckCircle2, HardDrive, Menu, X, Settings } from 'lucide-react'
+import { LayoutDashboard, BookOpen, StickyNote, Users, ListChecks, CheckCircle2, HardDrive, Menu, X, Settings } from 'lucide-react'
 
-type Section = 'dashboard' | 'legendas' | (typeof COLLECTIONS)[number] | 'tarefas' | 'datahub' | 'settings'
+type Section = 'dashboard' | (typeof COLLECTIONS)[number] | 'tarefas' | 'datahub' | 'settings'
 
 const NAV: { id: Section; label: string; icon: React.ReactNode }[] = [
   { id: 'dashboard', label: 'Painel', icon: <LayoutDashboard className="h-4 w-4" /> },
@@ -25,8 +24,6 @@ const NAV: { id: Section; label: string; icon: React.ReactNode }[] = [
   { id: 'notas_novas', label: 'Notas', icon: <StickyNote className="h-4 w-4" /> },
   { id: 'autores_citados', label: 'Autores', icon: <Users className="h-4 w-4" /> },
   { id: 'por_ler', label: 'Por Ler', icon: <ListChecks className="h-4 w-4" /> },
-  { id: 'coorientadores', label: 'Coorientadores', icon: <Target className="h-4 w-4" /> },
-  { id: 'legendas', label: 'Legendas', icon: <FileText className="h-4 w-4" /> },
   { id: 'tarefas', label: 'Tarefas', icon: <CheckCircle2 className="h-4 w-4" /> },
   { id: 'datahub', label: 'Backup', icon: <HardDrive className="h-4 w-4" /> },
   { id: 'settings', label: 'Configurações', icon: <Settings className="h-4 w-4" /> },
@@ -37,7 +34,6 @@ const COLUMNS: Record<string, typeof LEITURA_COLUMNS> = {
   notas_novas: NOTAS_NOVAS_COLUMNS,
   autores_citados: AUTORES_CITADOS_COLUMNS,
   por_ler: POR_LER_COLUMNS,
-  coorientadores: COORIENTADOR_COLUMNS,
 }
 
 export default function App() {
@@ -109,11 +105,10 @@ export default function App() {
             {section === 'dashboard' && <Dashboard />}
             {section === 'tarefas' && <Tasks />}
             {section === 'datahub' && <DataHub />}
-            {section === 'legendas' && <LegendasView />}
             {section === 'settings' && <SiteSettings />}
             {section === 'leituras' && <LeiturasView />}
             {section === 'notas_novas' && <NotasView />}
-            {(section !== 'dashboard' && section !== 'legendas' && section !== 'tarefas' && section !== 'datahub' && section !== 'settings' && section !== 'leituras' && section !== 'notas_novas') && (
+            {(section !== 'dashboard' && section !== 'tarefas' && section !== 'datahub' && section !== 'settings' && section !== 'leituras' && section !== 'notas_novas') && (
   <CollectionManager config={getConfig(section as CollectionName)!} columns={COLUMNS[section]} />
 )}
           </main>

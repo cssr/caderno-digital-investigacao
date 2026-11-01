@@ -55,7 +55,6 @@ export const COLLECTIONS: CollectionName[] = [
   'notas_novas',
   'autores_citados',
   'por_ler',
-  'coorientadores',
   'legendas',
   'tarefas',
 ]

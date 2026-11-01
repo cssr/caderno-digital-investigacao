@@ -13,7 +13,6 @@ const COLLECTIONS: { key: CollectionName; label: string }[] = [
   { key: 'notas_novas', label: 'NOTAS NOVAS' },
   { key: 'autores_citados', label: 'AUTORES CITADOS' },
   { key: 'por_ler', label: 'POR LER' },
-  { key: 'coorientadores', label: 'COORIENTADORES' },
   { key: 'tarefas', label: 'TAREFAS' },
 ]
 

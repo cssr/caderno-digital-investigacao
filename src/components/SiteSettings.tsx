@@ -3,6 +3,7 @@ import { getSettingsWithDefaults, saveSettings } from '../data/settings'
 import type { AppSettings } from '../types'
 import { TIPOS_DE_NOTA } from '../types'
 import { Save, ListPlus, Check, Loader2 } from 'lucide-react'
+import LegendasManager from './LegendasManager'
 
 export default function SiteSettings() {
   const [, setSettings] = useState<AppSettings | null>(null)
@@ -83,6 +84,10 @@ export default function SiteSettings() {
           <Check className="h-4 w-4" /> {message}
         </div>
       )}
+
+      <div className="rounded-lg border border-amber-200 bg-amber-50/30 p-1">
+        <LegendasManager />
+      </div>
 
       <form onSubmit={save} className="space-y-6">
         <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">

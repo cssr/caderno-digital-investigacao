@@ -6,7 +6,6 @@ import type { CollectionName } from '../types'
 import {
   LEITURA_ESTADOS,
   POR_LER_ESTADOS,
-  COORIENTADOR_ESTADOS,
   TIPOS_DE_NOTA,
   A_CONFIRMAR_OPTIONS,
   ORIGEM_OPTIONS,
@@ -102,27 +101,11 @@ export const POR_LER_CONFIG: CollectionConfig = {
   ],
 }
 
-export const COORIENTADOR_CONFIG: CollectionConfig = {
-  name: 'coorientadores',
-  title: 'Coorientadores',
-  description: 'Lista de pessoas/pastas a investigar, não leituras realizadas nem contactos confirmados.',
-  linksToReading: false,
-  fields: [
-    { key: 'nome_pasta', label: 'Nome da pasta', type: 'text', required: true },
-    { key: 'instituicao', label: 'Instituição (a confirmar)', type: 'text' },
-    { key: 'area_interesse', label: 'Área / Interesse', type: 'text' },
-    { key: 'textos_explorar', label: 'Textos para explorar', type: 'textarea' },
-    { key: 'estado', label: 'Estado', type: 'select', options: [...COORIENTADOR_ESTADOS] },
-    { key: 'notas_contacto', label: 'Notas / Contacto', type: 'textarea' },
-  ],
-}
-
 export const COLLECTION_CONFIGS: Record<Exclude<CollectionName, 'legendas' | 'tarefas'>, CollectionConfig> = {
   leituras: LEITURA_CONFIG,
   notas_novas: NOTAS_NOVAS_CONFIG,
   autores_citados: AUTORES_CITADO_CONFIG,
   por_ler: POR_LER_CONFIG,
-  coorientadores: COORIENTADOR_CONFIG,
 }
 
 export function getConfig(name: CollectionName): CollectionConfig | undefined {
