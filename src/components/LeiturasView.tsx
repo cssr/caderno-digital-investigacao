@@ -41,6 +41,11 @@ export default function LeiturasView() {
 
   useEffect(() => { load() }, [])
 
+  // Trigger the hidden file dialog whenever an upload target is set
+  useEffect(() => {
+    if (uploadFor && fileInputRef.current) fileInputRef.current.click()
+  }, [uploadFor])
+
   async function load() {
     const leituras = await db.leituras.toArray()
     setRecords(leituras)
