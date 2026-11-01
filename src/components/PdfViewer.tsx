@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import * as pdfjsLib from 'pdfjs-dist'
+import type { PDFDocumentProxy } from 'pdfjs-dist'
 import workerUrl from 'pdfjs-dist/build/pdf.worker.min.mjs?url'
 pdfjsLib.GlobalWorkerOptions.workerSrc = workerUrl
 import type { PdfAnnotation, HighlightColor, Leitura, ReadingPdf } from '../types'
@@ -52,10 +53,11 @@ export default function PdfViewer({ reading, pdf, annotations, onSave, onUpdate,
   const canvasRefs = useRef<Record<number, HTMLCanvasElement | null>>({})
   const overlayRefs = useRef<Record<number, HTMLDivElement | null>>({})
   const noteRef = useRef<HTMLTextAreaElement | null>(null)
+  const docRef = useRef<PDFDocumentProxy | null>(null)
 
   useEffect(() => {
     let cancelled = false
-    async function render() {
+    async function load() {
       if (!pdf) return
       setLoading(true); setError(null)
       try {
@@ -70,25 +72,44 @@ export default function PdfViewer({ reading, pdf, annotations, onSave, onUpdate,
           infos.push({ pageNumber: i, width: vp.width, height: vp.height })
         }
         if (cancelled) return
+        docRef.current = proxy
         setPages(infos)
-        for (const info of infos) {
-          const page = await proxy.getPage(info.pageNumber)
-          const canvas = canvasRefs.current[info.pageNumber]
-          if (!canvas) continue
-          const vp = page.getViewport({ scale })
-          canvas.width = vp.width
-          canvas.height = vp.height
-          await page.render({ canvasContext: canvas.getContext('2d')!, viewport: vp }).promise
-        }
       } catch (err: any) {
         if (!cancelled) setError(`Não foi possível abrir o PDF: ${err.message}`)
       } finally {
         if (!cancelled) setLoading(false)
       }
     }
-    render()
+    load()
     return () => { cancelled = true }
   }, [pdf, scale])
+
+  // Render each page to its canvas AFTER the canvases are mounted.
+  // (Rendering synchronously right after setPages() ran before the
+  // canvas refs existed, leaving every page blank.)
+  useEffect(() => {
+    if (pages.length === 0 || !docRef.current) return
+    let cancelled = false
+    async function renderPages() {
+      for (const info of pages) {
+        if (cancelled) return
+        const canvas = canvasRefs.current[info.pageNumber]
+        if (!canvas) continue
+        let page
+        try {
+          page = await docRef.current!.getPage(info.pageNumber)
+        } catch {
+          continue
+        }
+        const vp = page.getViewport({ scale })
+        canvas.width = vp.width
+        canvas.height = vp.height
+        await page.render({ canvasContext: canvas.getContext('2d')!, viewport: vp }).promise
+      }
+    }
+    renderPages()
+    return () => { cancelled = true }
+  }, [pages, scale])
 
   function focusNote(id: string) {
     setFocusId(id)
