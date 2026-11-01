@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import * as pdfjsLib from 'pdfjs-dist'
 import type { PDFDocumentProxy } from 'pdfjs-dist'
+import { PDFDocument } from 'pdf-lib'
 import workerUrl from 'pdfjs-dist/build/pdf.worker.min.mjs?url'
 pdfjsLib.GlobalWorkerOptions.workerSrc = workerUrl
 import type { PdfAnnotation, HighlightColor, Leitura, ReadingPdf } from '../types'
@@ -17,6 +18,75 @@ const COLOR_SWATCH: Record<HighlightColor, string> = {
   green: 'bg-green-300',
   pink: 'bg-rose-300',
   blue: 'bg-sky-300',
+}
+
+// Solid RGB triples (0-255) for the same highlight colors, used when baking
+// highlights into a downloadable PDF (canvas fillStyle needs a solid color).
+const COLOR_RGB: Record<HighlightColor, [number, number, number]> = {
+  yellow: [250, 208, 67],
+  green: [134, 239, 128],
+  pink: [248, 113, 113],
+  blue: [123, 173, 255],
+}
+
+function base64ToUint8Array(base64: string): Uint8Array {
+  const binary = atob(base64)
+  const bytes = new Uint8Array(binary.length)
+  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i)
+  return bytes
+}
+
+// Bakes the highlight annotations into a NEW PDF so the downloaded file shows
+// them. pdf-lib 1.17 can't add highlight annotations directly, so we render
+// each annotated page (pdfjs) with the highlight rectangles drawn on top, then
+// embed the rendered page as an image into a fresh pdf-lib document.
+async function buildAnnotatedPdf(blob: Blob, annotations: PdfAnnotation[]): Promise<Blob> {
+  const bytes = await blob.slice(0).arrayBuffer()
+  const proxy = await pdfjsLib.getDocument({ data: bytes }).promise
+
+  const byPage = new Map<number, PdfAnnotation[]>()
+  for (const a of annotations) {
+    if (!byPage.has(a.page)) byPage.set(a.page, [])
+    byPage.get(a.page)!.push(a)
+  }
+
+  // Render at 2x for crisp embedded images; page size stays at scale-1 points.
+  const RENDER_SCALE = 2
+
+  const doc = await PDFDocument.create()
+  for (let i = 1; i <= proxy.numPages; i++) {
+    const page = await proxy.getPage(i)
+    const vp = page.getViewport({ scale: RENDER_SCALE })
+    const displayW = vp.width / RENDER_SCALE
+    const displayH = vp.height / RENDER_SCALE
+
+    const canvas = document.createElement('canvas')
+    canvas.width = vp.width
+    canvas.height = vp.height
+    const ctx = canvas.getContext('2d')!
+    await page.render({ canvasContext: ctx, viewport: vp }).promise
+
+    for (const a of byPage.get(i) ?? []) {
+      const rgb = COLOR_RGB[a.color] ?? COLOR_RGB.yellow
+      ctx.globalAlpha = 0.45
+      ctx.fillStyle = `rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]})`
+      ctx.fillRect(
+        (a.x / 100) * canvas.width,
+        (a.y / 100) * canvas.height,
+        (a.w / 100) * canvas.width,
+        (a.h / 100) * canvas.height
+      )
+    }
+    ctx.globalAlpha = 1.0
+
+    const pngBytes = base64ToUint8Array(canvas.toDataURL('image/png').split(',')[1])
+    const img = await doc.embedPng(pngBytes)
+    const pdfPage = doc.addPage([displayW, displayH])
+    pdfPage.drawImage(img, { x: 0, y: 0, width: displayW, height: displayH })
+  }
+
+  const savedBytes = await doc.save()
+  return new Blob([savedBytes.buffer as ArrayBuffer], { type: 'application/pdf' })
 }
 
 interface Props {
@@ -61,7 +131,10 @@ export default function PdfViewer({ reading, pdf, annotations, onSave, onUpdate,
       if (!pdf) return
       setLoading(true); setError(null)
       try {
-        const buffer = await pdf.blob.arrayBuffer()
+        // Read the blob into an ArrayBuffer. `slice(0)` yields a fresh,
+        // unconsumed copy so the same stored Blob can be re-read on every
+        // open/close of the viewer (a Blob's arrayBuffer() only works once).
+        const buffer = await pdf.blob.slice(0).arrayBuffer()
         const proxy = await pdfjsLib.getDocument({ data: buffer }).promise
         if (cancelled) return
         const numPages = proxy.numPages
@@ -209,9 +282,26 @@ export default function PdfViewer({ reading, pdf, annotations, onSave, onUpdate,
             <button onClick={() => setScale((s) => Math.max(0.5, s - 0.1))} className="rounded-md border border-slate-300 px-2 py-1 hover:bg-slate-50">–</button>
             <span className="w-12 text-center text-xs text-slate-500">{Math.round(scale * 100)}%</span>
             <button onClick={() => setScale((s) => Math.min(2, s + 0.1))} className="rounded-md border border-slate-300 px-2 py-1 hover:bg-slate-50">+</button>
-            <a href={URL.createObjectURL(pdf.blob)} download={pdf.filename} className="inline-flex items-center gap-1 rounded-md border border-slate-300 px-2 py-1 hover:bg-slate-50">
-              <Download className="h-4 w-4" /> Download
-            </a>
+            <button
+              onClick={async () => {
+                if (!pdf) return
+                try {
+                  const annotated = await buildAnnotatedPdf(pdf.blob, annotations)
+                  const url = URL.createObjectURL(annotated)
+                  const a = document.createElement('a')
+                  a.href = url
+                  a.download = pdf.filename.replace(/\.pdf$/i, '') + '_anotado.pdf'
+                  document.body.appendChild(a)
+                  a.click()
+                  a.remove()
+                  URL.revokeObjectURL(url)
+                } catch (err) {
+                  console.error('Erro ao exportar PDF anotado:', err)
+                }
+              }}
+              className="inline-flex items-center gap-1 rounded-md border border-slate-300 bg-white px-2 py-1 text-[11px] text-slate-600 hover:bg-slate-100">
+              <Download className="h-4 w-4" /> Download anotado
+            </button>
           </div>
         </div>
 
