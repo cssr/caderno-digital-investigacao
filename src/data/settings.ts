@@ -45,6 +45,26 @@ export async function getSettings(): Promise<AppSettings> {
   return record
 }
 
+/** Return the settings, filling in any missing fields from defaults (backward-compat). */
+export async function getSettingsWithDefaults(): Promise<AppSettings> {
+  const existing = await db.settings.get(SETTINGS_ID)
+  if (existing) {
+    const merged: AppSettings = {
+      id: SETTINGS_ID,
+      themes: existing.themes && existing.themes.length > 0 ? existing.themes : [...DEFAULT_SETTINGS.themes],
+      relevance_levels: existing.relevance_levels && existing.relevance_levels.length > 0 ? existing.relevance_levels : [...DEFAULT_SETTINGS.relevance_levels],
+      note_types: existing.note_types && existing.note_types.length > 0 ? existing.note_types : [...DEFAULT_SETTINGS.note_types],
+      updated_at: existing.updated_at,
+    }
+    if (merged.note_types.length === 0 || merged.themes.length === 0 || merged.relevance_levels.length === 0) {
+      merged.updated_at = new Date().toISOString()
+      await db.settings.put(merged)
+    }
+    return merged
+  }
+  return getSettings()
+}
+
 /** Persist a full settings object (replaces the single record). */
 export async function saveSettings(next: Omit<AppSettings, 'id' | 'updated_at'>): Promise<AppSettings> {
   const record: AppSettings = {

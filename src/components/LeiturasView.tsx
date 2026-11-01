@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useState } from 'react'
 import { db } from '../db'
-import { getSettings } from '../data/settings'
-import type { Leitura, AppSettings } from '../types'
+import { getSettingsWithDefaults } from '../data/settings'
+import type { Leitura, AppSettings, NotaNova } from '../types'
 import { uid, norm } from '../utils'
-import { Plus, Pencil, Trash2, Search, X, BookOpen, Filter, ListPlus } from 'lucide-react'
+import { Plus, Pencil, Trash2, Search, X, BookOpen, Filter, ListPlus, StickyNote } from 'lucide-react'
 
 const ESTADOS = ['Em leitura', 'A reler', 'Lido', 'Arquivado']
 const ESTADO_CLASS: Record<string, string> = {
@@ -20,6 +20,7 @@ const ESTADO_LABELS: Record<string, string> = {
 export default function LeiturasView() {
   const [records, setRecords] = useState<Leitura[]>([])
   const [settings, setSettings] = useState<AppSettings | null>(null)
+  const [notasMap, setNotasMap] = useState<Map<string, NotaNova[]>>(new Map())
   const [search, setSearch] = useState('')
   const [formOpen, setFormOpen] = useState(false)
   const [editing, setEditing] = useState<Leitura | null>(null)
@@ -37,8 +38,16 @@ export default function LeiturasView() {
   async function load() {
     const leituras = await db.leituras.toArray()
     setRecords(leituras)
-    const s = await getSettings()
+    const s = await getSettingsWithDefaults()
     setSettings(s)
+    const notas = await db.notas_novas.toArray()
+    const map = new Map<string, NotaNova[]>()
+    for (const n of notas) {
+      const key = n.id_leitura
+      if (!map.has(key)) map.set(key, [])
+      map.get(key)!.push(n)
+    }
+    setNotasMap(map)
   }
 
   const initial = editing ? (editing as any) : {
@@ -268,7 +277,7 @@ export default function LeiturasView() {
                 <ListPlus className="h-4 w-4 text-amber-500" /> {key} ({list.length})
               </h3>
               <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-                {list.map((r) => <ReadingCard key={r.id} r={r} edit={() => { setEditing(r); setFormOpen(true) }} remove={remove} />)}
+                {list.map((r) => <ReadingCard key={r.id} r={r} edit={() => { setEditing(r); setFormOpen(true) }} remove={remove} notasMap={notasMap} />)}
               </div>
             </div>
           ))}
@@ -276,7 +285,7 @@ export default function LeiturasView() {
             <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
               <h3 className="mb-3 flex items-center gap-2 text-sm font-bold text-slate-500">(Sem {groupBy}) ({groups.ungrouped.length})</h3>
               <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-                {groups.ungrouped.map((r) => <ReadingCard key={r.id} r={r} edit={() => { setEditing(r); setFormOpen(true) }} remove={remove} />)}
+                {groups.ungrouped.map((r) => <ReadingCard key={r.id} r={r} edit={() => { setEditing(r); setFormOpen(true) }} remove={remove} notasMap={notasMap} />)}
               </div>
             </div>
           )}
@@ -286,9 +295,10 @@ export default function LeiturasView() {
   )
 }
 
-function ReadingCard({ r, edit, remove }: { r: Leitura; edit: () => void; remove: (r: Leitura) => void }) {
+function ReadingCard({ r, edit, remove, notasMap }: { r: Leitura; edit: () => void; remove: (r: Leitura) => void; notasMap: Map<string, NotaNova[]> }) {
   const temaClass = r.tema ? 'bg-amber-50 text-amber-700' : 'bg-slate-50 text-slate-400'
   const relevClass = r.relevancia ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-50 text-slate-400'
+  const notas = notasMap.get(r.id) ?? []
   return (
     <div className="rounded-md border border-slate-200 bg-slate-50/40 p-3 shadow-sm">
       <div className="mb-2 flex items-start justify-between gap-2">
@@ -309,6 +319,21 @@ function ReadingCard({ r, edit, remove }: { r: Leitura; edit: () => void; remove
         {r.relevancia && <span className={`inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[10px] font-medium ${relevClass}`}><BookOpen className="h-3 w-3" /> {r.relevancia}</span>}
         {r.fonte_link && /^https?:/.test(r.fonte_link) && <a href={r.fonte_link} target="_blank" rel="noreferrer" className="text-[10px] text-blue-600 hover:underline">Fonte ↗</a>}
       </div>
+      {notas.length > 0 && (
+        <div className="mt-3 border-t border-slate-100 pt-2">
+          <div className="mb-1 flex items-center gap-1 text-[10px] font-semibold text-sky-600">
+            <StickyNote className="h-3 w-3" /> {notas.length} nota(s)
+          </div>
+          <ul className="space-y-1">
+            {notas.map((n) => (
+              <li key={n.id} className="flex items-start gap-2 text-xs text-slate-600">
+                <span className="shrink-0 rounded bg-sky-50 px-1 py-0.5 font-medium text-sky-700">{n.tipo_nota}</span>
+                <span className="line-clamp-2">{n.texto_idea}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   )
 }

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { db } from '../db'
-import { getSettings } from '../data/settings'
-import type { NotaNova, AppSettings } from '../types'
+import { getSettingsWithDefaults } from '../data/settings'
+import type { NotaNova, Leitura, AppSettings } from '../types'
 import { A_CONFIRMAR_OPTIONS } from '../types'
 import { uid, norm } from '../utils'
 import { Plus, Pencil, Trash2, Search, X, StickyNote, Filter, ListPlus, BookOpen } from 'lucide-react'
@@ -18,6 +18,7 @@ const A_CONFEIR_CLASS: Record<string, string> = {
 export default function NotasView() {
   const [records, setRecords] = useState<NotaNova[]>([])
   const [settings, setSettings] = useState<AppSettings | null>(null)
+  const [leiturasList, setLeiturasList] = useState<Leitura[]>([])
   const [readingMap, setReadingMap] = useState<Map<string, string> | null>(null)
   const [search, setSearch] = useState('')
   const [formOpen, setFormOpen] = useState(false)
@@ -36,9 +37,10 @@ export default function NotasView() {
   async function load() {
     const notas = await db.notas_novas.toArray()
     setRecords(notas)
-    const s = await getSettings()
+    const s = await getSettingsWithDefaults()
     setSettings(s)
     const leituras = await db.leituras.toArray()
+    setLeiturasList(leituras)
     const map = new Map<string, string>()
     for (const l of leituras) map.set(l.id, `${l.id} — ${l.titulo}`)
     setReadingMap(map)
@@ -94,10 +96,10 @@ export default function NotasView() {
   }, [records, settings])
 
   const allTema = useMemo(() => {
-    const set = new Set<string>()
+    const set = new Set<string>(settings?.themes ?? [])
     for (const r of records) if (r.tema) set.add(r.tema)
     return [...set].sort()
-  }, [records])
+  }, [records, settings])
 
   const filtered = useMemo(() => {
     let rows = records
@@ -151,7 +153,10 @@ export default function NotasView() {
           <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
             <div>
               <label className="mb-1 block text-xs font-medium text-slate-500">ID Leitura *</label>
-              <input name="id_leitura" defaultValue={initial.id_leitura} required className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500" />
+              <select name="id_leitura" defaultValue={initial.id_leitura} required className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500">
+                <option value="">— —</option>
+                {leiturasList.map((l) => <option key={l.id} value={l.id}>{l.id} — {l.titulo}</option>)}
+              </select>
             </div>
             <div>
               <label className="mb-1 block text-xs font-medium text-slate-500">Página / Secção</label>
@@ -178,7 +183,8 @@ export default function NotasView() {
             </div>
             <div>
               <label className="mb-1 block text-xs font-medium text-slate-500">Tema</label>
-              <input name="tema" defaultValue={initial.tema} placeholder="Escolhe ou escreve um tema" className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500" />
+              <input name="tema" list="temas-notas" defaultValue={initial.tema} placeholder="Escolhe ou escreve um tema" className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500" />
+              <datalist id="temas-notas">{allTema.map((t) => <option key={t} value={t} />)}</datalist>
             </div>
             <div>
               <label className="mb-1 block text-xs font-medium text-slate-500">A conferir?</label>

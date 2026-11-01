@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { getSettings, saveSettings } from '../data/settings'
+import { getSettingsWithDefaults, saveSettings } from '../data/settings'
 import type { AppSettings } from '../types'
 import { TIPOS_DE_NOTA } from '../types'
 import { Save, ListPlus, Check, Loader2 } from 'lucide-react'
@@ -16,7 +16,7 @@ export default function SiteSettings() {
   const [noteTypeInput, setNoteTypeInput] = useState('')
 
   useEffect(() => {
-    getSettings().then((s) => {
+    getSettingsWithDefaults().then((s) => {
       setSettings(s)
       setThemes(s.themes)
       setLevels(s.relevance_levels)

@@ -2,7 +2,7 @@
 // Import / Export: JSON full backup + per-sheet CSV.
 // ============================================================================
 import { db } from '../db'
-import { getSettings } from './settings'
+import { getSettingsWithDefaults } from './settings'
 import type { CollectionName } from '../types'
 import { toCsvLine, fromCsvLine, download } from '../utils'
 import type { Table } from 'dexie'
@@ -97,7 +97,7 @@ export async function buildJSONBackup(): Promise<string> {
   for (const sheet of SHEETS) {
     payload[sheet.label] = await db[sheet.name].toArray()
   }
-  const settings = await getSettings()
+  const settings = await getSettingsWithDefaults()
   const backup = {
     app: 'caderno-digital-investigacao',
     version: 1,
@@ -150,7 +150,7 @@ export async function importJSONBackup(json: string): Promise<{ imported: Record
     imported[sheet.label] = mapped.length
   }
   if (data.settings) {
-    const saved = await getSettings()
+    const saved = await getSettingsWithDefaults()
     await db.settings.put({
       id: saved.id,
       themes: Array.isArray(data.settings.themes) ? data.settings.themes : saved.themes,
