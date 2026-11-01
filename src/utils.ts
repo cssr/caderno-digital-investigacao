@@ -85,6 +85,18 @@ export function download(filename: string, content: string, type: string) {
   URL.revokeObjectURL(url)
 }
 
+/** Download an existing Blob directly as a file (used for PDFs). */
+export function downloadBlob(filename: string, blob: Blob) {
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = filename
+  document.body.appendChild(a)
+  a.click()
+  a.remove()
+  URL.revokeObjectURL(url)
+}
+
 /** Lowercase helper for fuzzy search. */
 export function norm(s: string | null | undefined): string {
   return (s ?? '')

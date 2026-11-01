@@ -8,6 +8,8 @@ import type {
   Legenda,
   Tarefa,
   AppSettings,
+  ReadingPdf,
+  PdfAnnotation,
   CollectionName,
 } from './types'
 
@@ -20,11 +22,13 @@ interface CadernoDB {
   legendas: Table<Legenda, string>
   tarefas: Table<Tarefa, string>
   settings: Table<AppSettings, string>
+  pdfs: Table<ReadingPdf, string>
+  annotations: Table<PdfAnnotation, string>
 }
 
 const raw = new Dexie('CadernoInvestigacaoDB')
 
-raw.version(2).stores({
+raw.version(3).stores({
   leituras: 'id, tema, relevancia',
   notas_novas: 'id, id_leitura',
   autores_citados: 'id, id_leitura',
@@ -33,6 +37,8 @@ raw.version(2).stores({
   legendas: 'id',
   tarefas: 'id, category',
   settings: 'id',
+  pdfs: 'id, id_leitura',
+  annotations: 'id, id_leitura, page',
 })
 
 export const db = raw as unknown as CadernoDB

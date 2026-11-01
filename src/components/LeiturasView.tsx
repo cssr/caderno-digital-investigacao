@@ -1,9 +1,10 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { db } from '../db'
 import { getSettingsWithDefaults } from '../data/settings'
-import type { Leitura, AppSettings, NotaNova } from '../types'
+import type { Leitura, AppSettings, NotaNova, ReadingPdf, PdfAnnotation } from '../types'
 import { uid, norm } from '../utils'
-import { Plus, Pencil, Trash2, Search, X, BookOpen, Filter, ListPlus, StickyNote } from 'lucide-react'
+import PdfViewer from './PdfViewer'
+import { Plus, Pencil, Trash2, Search, X, BookOpen, Filter, ListPlus, StickyNote, FileText, Upload } from 'lucide-react'
 
 const ESTADOS = ['Em leitura', 'A reler', 'Lido', 'Arquivado']
 const ESTADO_CLASS: Record<string, string> = {
@@ -21,11 +22,16 @@ export default function LeiturasView() {
   const [records, setRecords] = useState<Leitura[]>([])
   const [settings, setSettings] = useState<AppSettings | null>(null)
   const [notasMap, setNotasMap] = useState<Map<string, NotaNova[]>>(new Map())
+  const [pdfMap, setPdfMap] = useState<Map<string, ReadingPdf>>(new Map())
+  const [annotationMap, setAnnotationMap] = useState<Map<string, PdfAnnotation[]>>(new Map())
+  const [activePdf, setActivePdf] = useState<{ pdf: ReadingPdf; annotations: PdfAnnotation[] } | null>(null)
   const [search, setSearch] = useState('')
   const [formOpen, setFormOpen] = useState(false)
   const [editing, setEditing] = useState<Leitura | null>(null)
   const [busy, setBusy] = useState(false)
   const [message, setMessage] = useState<string | null>(null)
+  const fileInputRef = useRef<HTMLInputElement | null>(null)
+  const [uploadFor, setUploadFor] = useState<string | null>(null)
 
   // Filters
   const [filterTema, setFilterTema] = useState('')
@@ -41,13 +47,105 @@ export default function LeiturasView() {
     const s = await getSettingsWithDefaults()
     setSettings(s)
     const notas = await db.notas_novas.toArray()
-    const map = new Map<string, NotaNova[]>()
+    const notasMap = new Map<string, NotaNova[]>()
     for (const n of notas) {
       const key = n.id_leitura
-      if (!map.has(key)) map.set(key, [])
-      map.get(key)!.push(n)
+      if (!notasMap.has(key)) notasMap.set(key, [])
+      notasMap.get(key)!.push(n)
     }
-    setNotasMap(map)
+    setNotasMap(notasMap)
+
+    const pdfs = await db.pdfs.toArray()
+    const pdfMap = new Map<string, ReadingPdf>()
+    for (const p of pdfs) pdfMap.set(p.id_leitura, p)
+    setPdfMap(pdfMap)
+
+    const anns = await db.annotations.toArray()
+    const annMap = new Map<string, PdfAnnotation[]>()
+    for (const a of anns) {
+      const key = a.id_leitura
+      if (!annMap.has(key)) annMap.set(key, [])
+      annMap.get(key)!.push(a)
+    }
+    setAnnotationMap(annMap)
+  }
+
+  async function uploadPdf(id: string, file: File) {
+    setBusy(true); setMessage(null)
+    try {
+      const existing = await db.pdfs.where('id_leitura').equals(id).toArray()
+      for (const old of existing) await db.pdfs.delete(old.id)
+      const record: ReadingPdf = {
+        id: `pdf_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
+        id_leitura: id,
+        filename: file.name,
+        uploaded_at: new Date().toISOString(),
+        blob: file,
+      }
+      await db.pdfs.add(record)
+      await load()
+      setMessage('PDF guardado nesta leitura.')
+    } catch (err: any) {
+      setMessage(`Erro ao guardar o PDF: ${err.message}`)
+    } finally { setBusy(false) }
+    setUploadFor(null)
+    if (fileInputRef.current) fileInputRef.current.value = ''
+  }
+
+  async function removePdf(id: string) {
+    if (!confirm(`Eliminar o PDF desta leitura?`)) return
+    await db.pdfs.where('id_leitura').equals(id).delete()
+    await db.annotations.where('id_leitura').equals(id).delete()
+    if (activePdf && activePdf.pdf.id_leitura === id) setActivePdf(null)
+    await load()
+    setMessage('PDF eliminado.')
+  }
+
+  function openViewer(id: string) {
+    const pdf = pdfMap.get(id)
+    if (!pdf) return
+    setActivePdf({ pdf, annotations: annotationMap.get(id) ?? [] })
+  }
+
+  function saveAnnotation(a: PdfAnnotation) {
+    a.created_at = new Date().toISOString()
+    a.updated_at = new Date().toISOString()
+    db.annotations.add(a).then(() => {
+      setAnnotationMap((prev) => {
+        const next = new Map(prev)
+        const list = next.get(a.id_leitura) ?? []
+        next.set(a.id_leitura, [...list, a])
+        return next
+      })
+      if (activePdf && activePdf.pdf.id_leitura === a.id_leitura) setActivePdf({ ...activePdf, annotations: [...activePdf.annotations, a] })
+    })
+  }
+
+  function updateAnnotation(a: PdfAnnotation) {
+    a.updated_at = new Date().toISOString()
+    db.annotations.put(a).then(() => {
+      setAnnotationMap((prev) => {
+        const next = new Map(prev)
+        const list = next.get(a.id_leitura) ?? []
+        next.set(a.id_leitura, list.map((x) => (x.id === a.id ? a : x)))
+        return next
+      })
+      if (activePdf && activePdf.pdf.id_leitura === a.id_leitura) setActivePdf({ ...activePdf, annotations: activePdf.annotations.map((x) => (x.id === a.id ? a : x)) })
+    })
+  }
+
+  function deleteAnnotation(id: string) {
+    db.annotations.delete(id).then(() => {
+      setAnnotationMap((prev) => {
+        const next = new Map(prev)
+        for (const [k, list] of next) {
+          const filtered = list.filter((x) => x.id !== id)
+          if (filtered.length) next.set(k, filtered); else next.delete(k)
+        }
+        return next
+      })
+      if (activePdf) setActivePdf({ ...activePdf, annotations: activePdf.annotations.filter((a) => a.id !== id) })
+    })
   }
 
   const initial = editing ? (editing as any) : {
@@ -90,9 +188,11 @@ export default function LeiturasView() {
   }
 
   async function remove(row: Leitura) {
-    if (!confirm(`Eliminar a leitura "${row.id}"? Todas as notas e autores citados associados serão eliminados.`)) return
+    if (!confirm(`Eliminar a leitura "${row.id}"? Todas as notas, PDFs e anotações associados serão eliminados.`)) return
     await db.notas_novas.where('id_leitura').equals(row.id).delete()
     await db.autores_citados.where('id_leitura').equals(row.id).delete()
+    await db.pdfs.where('id_leitura').equals(row.id).delete()
+    await db.annotations.where('id_leitura').equals(row.id).delete()
     await db.leituras.delete(row.id)
     load()
   }
@@ -277,7 +377,7 @@ export default function LeiturasView() {
                 <ListPlus className="h-4 w-4 text-amber-500" /> {key} ({list.length})
               </h3>
               <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-                {list.map((r) => <ReadingCard key={r.id} r={r} edit={() => { setEditing(r); setFormOpen(true) }} remove={remove} notasMap={notasMap} />)}
+                {list.map((r) => <ReadingCard key={r.id} r={r} edit={() => { setEditing(r); setFormOpen(true) }} remove={remove} notasMap={notasMap} pdf={pdfMap.get(r.id) ?? null} annotationCount={annotationMap.get(r.id)?.length ?? 0} onOpen={() => openViewer(r.id)} onUpload={() => setUploadFor(r.id)} onRemovePdf={() => removePdf(r.id)} />)}
               </div>
             </div>
           ))}
@@ -285,17 +385,44 @@ export default function LeiturasView() {
             <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
               <h3 className="mb-3 flex items-center gap-2 text-sm font-bold text-slate-500">(Sem {groupBy}) ({groups.ungrouped.length})</h3>
               <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-                {groups.ungrouped.map((r) => <ReadingCard key={r.id} r={r} edit={() => { setEditing(r); setFormOpen(true) }} remove={remove} notasMap={notasMap} />)}
+                {groups.ungrouped.map((r) => <ReadingCard key={r.id} r={r} edit={() => { setEditing(r); setFormOpen(true) }} remove={remove} notasMap={notasMap} pdf={pdfMap.get(r.id) ?? null} annotationCount={annotationMap.get(r.id)?.length ?? 0} onOpen={() => openViewer(r.id)} onUpload={() => setUploadFor(r.id)} onRemovePdf={() => removePdf(r.id)} />)}
               </div>
             </div>
           )}
         </div>
       )}
+
+      {uploadFor && (
+        <input ref={fileInputRef} type="file" accept="application/pdf" className="hidden"
+          onChange={(e) => { const f = e.target.files?.[0]; if (f) uploadPdf(uploadFor, f) }} />
+      )}
+
+      {activePdf && (
+        <PdfViewer
+          reading={records.find((r) => r.id === activePdf.pdf.id_leitura)!}
+          pdf={activePdf.pdf}
+          annotations={activePdf.annotations}
+          onSave={saveAnnotation}
+          onUpdate={updateAnnotation}
+          onDelete={deleteAnnotation}
+          onClose={() => setActivePdf(null)}
+        />
+      )}
     </div>
   )
 }
 
-function ReadingCard({ r, edit, remove, notasMap }: { r: Leitura; edit: () => void; remove: (r: Leitura) => void; notasMap: Map<string, NotaNova[]> }) {
+function ReadingCard({ r, edit, remove, notasMap, pdf, annotationCount, onOpen, onUpload, onRemovePdf }: {
+  r: Leitura
+  edit: () => void
+  remove: (r: Leitura) => void
+  notasMap: Map<string, NotaNova[]>
+  pdf: ReadingPdf | null
+  annotationCount: number
+  onOpen: () => void
+  onUpload: () => void
+  onRemovePdf: () => void
+}) {
   const temaClass = r.tema ? 'bg-amber-50 text-amber-700' : 'bg-slate-50 text-slate-400'
   const relevClass = r.relevancia ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-50 text-slate-400'
   const notas = notasMap.get(r.id) ?? []
@@ -318,6 +445,16 @@ function ReadingCard({ r, edit, remove, notasMap }: { r: Leitura; edit: () => vo
         <span className={`inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[10px] font-medium ${temaClass}`}><ListPlus className="h-3 w-3" /> {r.tema || 'sem tema'}</span>
         {r.relevancia && <span className={`inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[10px] font-medium ${relevClass}`}><BookOpen className="h-3 w-3" /> {r.relevancia}</span>}
         {r.fonte_link && /^https?:/.test(r.fonte_link) && <a href={r.fonte_link} target="_blank" rel="noreferrer" className="text-[10px] text-blue-600 hover:underline">Fonte ↗</a>}
+      </div>
+      <div className="mt-2 flex flex-wrap items-center gap-2">
+        <button onClick={onUpload} className="inline-flex items-center gap-1 rounded-md border border-slate-300 bg-white px-2 py-1 text-[11px] text-slate-600 hover:bg-slate-100">
+          <Upload className="h-3.5 w-3.5" /> {pdf ? 'Substituir PDF' : 'Upload PDF'}
+        </button>
+        <button onClick={onOpen} disabled={!pdf} className="inline-flex items-center gap-1 rounded-md border border-slate-300 bg-white px-2 py-1 text-[11px] text-slate-600 hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed">
+          <FileText className="h-3.5 w-3.5" /> {pdf ? 'Abrir PDF' : 'Ver PDF'}
+        </button>
+        {annotationCount > 0 && <span className="inline-flex items-center gap-1 rounded bg-sky-50 px-1.5 py-0.5 text-[10px] font-semibold text-sky-700"><StickyNote className="h-3 w-3" /> {annotationCount} destaque(s)</span>}
+        {pdf && <button onClick={onRemovePdf} className="ml-auto text-slate-400 hover:text-red-600" title="Eliminar PDF"><Trash2 className="h-3.5 w-3.5" /></button>}
       </div>
       {notas.length > 0 && (
         <div className="mt-3 border-t border-slate-100 pt-2">

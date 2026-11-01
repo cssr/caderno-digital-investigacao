@@ -4,7 +4,7 @@
 import { db } from '../db'
 import { getSettingsWithDefaults } from './settings'
 import type { CollectionName } from '../types'
-import { toCsvLine, fromCsvLine, download } from '../utils'
+import { toCsvLine, fromCsvLine, download, downloadBlob } from '../utils'
 import type { Table } from 'dexie'
 import {
   LEITURA_COLUMNS,
@@ -115,6 +115,20 @@ export async function downloadCSV() {
 
 export function downloadJSON() {
   buildJSONBackup().then((json) => download(`caderno_backup_${new Date().toISOString().slice(0, 10)}.json`, json, 'application/json'))
+}
+
+/** Download a single reading PDF. */
+export async function exportPdf(id_leitura: string): Promise<void> {
+  const row = await db.pdfs.get({ id_leitura })
+  if (!row) throw new Error(`Sem PDF para a leitura ${id_leitura}`)
+  downloadBlob(row.filename, row.blob)
+}
+
+/** Download every uploaded PDF (one file per reading). Returns the count. */
+export async function exportAllPdfs(trigger: (blob: Blob, filename: string) => void): Promise<number> {
+  const rows = await db.pdfs.toArray()
+  for (const r of rows) trigger(r.blob, r.filename)
+  return rows.length
 }
 
 export function readCSVFile(file: File): Promise<string> {

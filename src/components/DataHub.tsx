@@ -1,10 +1,12 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   downloadJSON, downloadCSV,
   readJSONFile, readCSVFile, importJSONBackup, importCSV,
+  exportPdf, exportAllPdfs,
 } from '../data/storage'
-import type { CollectionName } from '../types'
-import { Download, Upload, FileJson, FileSpreadsheet, Check, Loader2 } from 'lucide-react'
+import { db } from '../db'
+import type { CollectionName, Leitura, ReadingPdf } from '../types'
+import { Download, Upload, FileJson, FileSpreadsheet, FileText, Check, Loader2 } from 'lucide-react'
 
 const COLLECTIONS: { key: CollectionName; label: string }[] = [
   { key: 'leituras', label: 'LEITURAS' },
@@ -21,6 +23,16 @@ export default function DataHub() {
   const [csvFile, setCsvFile] = useState<File | null>(null)
   const [csvCollection, setCsvCollection] = useState<CollectionName>('leituras')
   const [message, setMessage] = useState<string | null>(null)
+  const [pdfRows, setPdfRows] = useState<{ leitura: Leitura; pdf: ReadingPdf }[]>([])
+
+  useEffect(() => { loadPdfs() }, [])
+
+  async function loadPdfs() {
+    const pdfs = await db.pdfs.toArray()
+    const leituras = await db.leituras.toArray()
+    const byId = new Map(leituras.map((l) => [l.id, l]))
+    setPdfRows(pdfs.map((p) => ({ leitura: byId.get(p.id_leitura) ?? { id: p.id_leitura, titulo: p.id_leitura, autores: '', ano: null, referencia_apa: '', problematica: '', tese: '', estado: '', fonte_link: '', conferencias: '', tema: '', relevancia: '', created_at: '', updated_at: '' }, pdf: p })))
+  }
 
   async function exportJSON() {
     setBusy(true); setMessage(null)
@@ -57,6 +69,29 @@ export default function DataHub() {
     } catch (err: any) {
       setMessage(`Erro na importação CSV: ${err.message}`)
     } finally { setBusy(false) }
+  }
+
+  async function exportOnePdf(id_leitura: string) {
+    setBusy(true); setMessage(null)
+    try { await exportPdf(id_leitura); setMessage('PDF descarregado.') } catch (err: any) { setMessage(`Erro: ${err.message}`) } finally { setBusy(false) }
+  }
+
+  async function exportAllPdfFiles() {
+    if (pdfRows.length === 0) { setMessage('Não há PDFs guardados para descarregar.'); return }
+    setBusy(true); setMessage(null)
+    try {
+      const n = await exportAllPdfs((blob, filename) => {
+        const url = URL.createObjectURL(blob)
+        const a = document.createElement('a')
+        a.href = url
+        a.download = filename
+        document.body.appendChild(a)
+        a.click()
+        a.remove()
+        URL.revokeObjectURL(url)
+      })
+      setMessage(`${n} PDF(s) descarregados.`)
+    } catch (err: any) { setMessage(`Erro: ${err.message}`) } finally { setBusy(false) }
   }
 
   return (
@@ -104,6 +139,38 @@ export default function DataHub() {
             </button>
           </div>
         </div>
+      </div>
+
+      <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+        <div className="mb-3 flex items-center gap-2">
+          <FileText className="h-5 w-5 text-rose-600" />
+          <h2 className="text-sm font-semibold text-slate-700">Descarregar PDFs das leituras</h2>
+        </div>
+        <p className="mb-4 text-xs text-slate-500">Transfira os ficheiros PDF associados às leituras — um de cada vez ou todos de uma vez. Ideal para conservar as fontes originais.</p>
+        {pdfRows.length === 0 ? (
+          <p className="text-xs text-slate-400">Não há PDFs guardados. Adicione ficheiros na página «Leituras».</p>
+        ) : (
+          <>
+            <div className="mb-3 flex flex-wrap items-center gap-3">
+              <button onClick={exportAllPdfFiles} disabled={busy} className="inline-flex items-center gap-2 rounded-md bg-rose-600 px-4 py-2 text-sm font-medium text-white hover:bg-rose-700 disabled:opacity-50">
+                {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />} Download de todos ({pdfRows.length})
+              </button>
+            </div>
+            <ul className="space-y-2">
+              {pdfRows.map((row) => (
+                <li key={row.pdf.id} className="flex items-center justify-between gap-2 rounded-md border border-slate-200 bg-slate-50 px-3 py-2">
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-semibold text-slate-700">{row.leitura.id} — {row.leitura.titulo}</p>
+                    <p className="text-xs text-slate-400">{row.pdf.filename}</p>
+                  </div>
+                  <button onClick={() => exportOnePdf(row.pdf.id_leitura)} disabled={busy} className="shrink-0 rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-700 hover:bg-slate-100 disabled:opacity-50">
+                    <Download className="inline h-4 w-4" /> PDF
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </>
+        )}
       </div>
 
       <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">

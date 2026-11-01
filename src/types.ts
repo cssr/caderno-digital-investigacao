@@ -24,6 +24,29 @@ export interface Leitura extends Timestamps {
   relevancia: string
 }
 
+// ---- READING PDF (one PDF uploaded per reading) ----
+export interface ReadingPdf {
+  id: string
+  id_leitura: string
+  filename: string
+  uploaded_at: string
+  blob: Blob
+}
+
+// ---- PDF ANNOTATIONS (highlights + notes attached to a reading PDF) ----
+export type HighlightColor = 'yellow' | 'green' | 'pink' | 'blue'
+export interface PdfAnnotation extends Timestamps {
+  id: string
+  id_leitura: string
+  page: number          // 1-based page number
+  x: number             // percent of page canvas width
+  y: number             // percent of page canvas height
+  w: number             // width percent
+  h: number             // height percent
+  color: HighlightColor
+  text: string          // note attached to the highlight
+}
+
 // ---- NOTAS NOVAS (New notes, linked to a reading) ----
 export interface NotaNova extends Timestamps {
   id: string
