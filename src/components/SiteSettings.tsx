@@ -1,22 +1,26 @@
 import { useEffect, useState } from 'react'
 import { getSettings, saveSettings } from '../data/settings'
 import type { AppSettings } from '../types'
+import { TIPOS_DE_NOTA } from '../types'
 import { Save, ListPlus, Check, Loader2 } from 'lucide-react'
 
 export default function SiteSettings() {
   const [, setSettings] = useState<AppSettings | null>(null)
   const [themes, setThemes] = useState<string[]>([])
   const [levels, setLevels] = useState<string[]>([])
+  const [noteTypes, setNoteTypes] = useState<string[]>([])
   const [busy, setBusy] = useState(false)
   const [message, setMessage] = useState<string | null>(null)
   const [themeInput, setThemeInput] = useState('')
   const [levelInput, setLevelInput] = useState('')
+  const [noteTypeInput, setNoteTypeInput] = useState('')
 
   useEffect(() => {
     getSettings().then((s) => {
       setSettings(s)
       setThemes(s.themes)
       setLevels(s.relevance_levels)
+      setNoteTypes((s.note_types && s.note_types.length > 0) ? s.note_types : [...TIPOS_DE_NOTA as unknown as string[]])
     })
   }, [])
 
@@ -44,12 +48,24 @@ export default function SiteSettings() {
     setLevels(levels.filter((l) => l !== value))
   }
 
+  function addNoteType(e: React.FormEvent) {
+    e.preventDefault()
+    const value = noteTypeInput.trim()
+    if (!value || noteTypes.includes(value)) return
+    setNoteTypes([...noteTypes, value])
+    setNoteTypeInput('')
+  }
+
+  function removeNoteType(value: string) {
+    setNoteTypes(noteTypes.filter((t) => t !== value))
+  }
+
   async function save(e: React.FormEvent) {
     e.preventDefault()
     setBusy(true); setMessage(null)
     if (themes.length === 0) { setMessage('Adicione pelo menos um tema.'); setBusy(false); return }
     if (levels.length === 0) { setMessage('Adicione pelo menos um nível de relevância.'); setBusy(false); return }
-    const saved = await saveSettings({ themes, relevance_levels: levels })
+    const saved = await saveSettings({ themes, relevance_levels: levels, note_types: noteTypes })
     setSettings(saved)
     setMessage('Configurações guardadas.')
     setBusy(false)
@@ -59,7 +75,7 @@ export default function SiteSettings() {
     <div className="space-y-4">
       <div>
         <h1 className="text-2xl font-bold text-slate-800">Configurações do Sítio</h1>
-        <p className="text-sm text-slate-500">Defina os Temas e a escala de Relevância usados nas leituras. Estas listas aparecem nos formulários e nos filtros.</p>
+        <p className="text-sm text-slate-500">Defina os Temas, a escala de Relevância e os Tipos de nota usados nas leituras e nas notas. Estas listas aparecem nos formulários e nos filtros.</p>
       </div>
 
       {message && (
@@ -124,6 +140,35 @@ export default function SiteSettings() {
               </li>
             ))}
             {levels.length === 0 && <p className="text-xs text-slate-400">Sem níveis ainda.</p>}
+          </ul>
+        </div>
+
+        <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+          <div className="mb-4 flex items-center gap-2">
+            <ListPlus className="h-5 w-5 text-sky-600" />
+            <h2 className="text-sm font-semibold text-slate-700">Tipos de Nota</h2>
+          </div>
+          <p className="mb-4 text-xs text-slate-500">Os tipos de nota aparecem como opções no dropdown "Tipo de nota" quando adicionas ou editas uma nota. Podes adicionar, editar (reordenar) ou remover.</p>
+          <div className="flex flex-wrap items-end gap-3">
+            <div className="flex-1 max-w-xs">
+              <label className="mb-1 block text-xs font-medium text-slate-500">Novo tipo de nota</label>
+              <input
+                value={noteTypeInput}
+                onChange={(e) => setNoteTypeInput(e.target.value)}
+                placeholder="ex: Síntese crítica"
+                className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500"
+              />
+            </div>
+            <button type="button" onClick={addNoteType} className="rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50">Adicionar tipo</button>
+          </div>
+          <ul className="mt-4 flex flex-wrap gap-2">
+            {noteTypes.map((t) => (
+              <li key={t} className="inline-flex items-center gap-2 rounded-full bg-sky-50 px-3 py-1 text-sm text-sky-800">
+                {t}
+                <button type="button" onClick={() => removeNoteType(t)} className="text-sky-400 hover:text-sky-700"><X /></button>
+              </li>
+            ))}
+            {noteTypes.length === 0 && <p className="text-xs text-slate-400">Sem tipos de nota ainda.</p>}
           </ul>
         </div>
 

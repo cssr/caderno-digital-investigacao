@@ -11,6 +11,7 @@ import CollectionManager from './components/CollectionManager'
 import Tasks from './components/Tasks'
 import DataHub from './components/DataHub'
 import LegendasView from './components/LegendasView'
+import NotasView from './components/NotasView'
 import LeiturasView from './components/LeiturasView'
 import SiteSettings from './components/SiteSettings'
 import type { CollectionName } from './types'
@@ -111,7 +112,8 @@ export default function App() {
             {section === 'legendas' && <LegendasView />}
             {section === 'settings' && <SiteSettings />}
             {section === 'leituras' && <LeiturasView />}
-            {(section !== 'dashboard' && section !== 'legendas' && section !== 'tarefas' && section !== 'datahub' && section !== 'settings' && section !== 'leituras') && (
+            {section === 'notas_novas' && <NotasView />}
+            {(section !== 'dashboard' && section !== 'legendas' && section !== 'tarefas' && section !== 'datahub' && section !== 'settings' && section !== 'leituras' && section !== 'notas_novas') && (
   <CollectionManager config={getConfig(section as CollectionName)!} columns={COLUMNS[section]} />
 )}
           </main>

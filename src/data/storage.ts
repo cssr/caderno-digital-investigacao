@@ -103,7 +103,7 @@ export async function buildJSONBackup(): Promise<string> {
     version: 1,
     exported_at: new Date().toISOString(),
     data: payload,
-    settings: { themes: settings.themes, relevance_levels: settings.relevance_levels },
+    settings: { themes: settings.themes, relevance_levels: settings.relevance_levels, note_types: settings.note_types },
   }
   return JSON.stringify(backup, null, 2)
 }
@@ -155,6 +155,9 @@ export async function importJSONBackup(json: string): Promise<{ imported: Record
       id: saved.id,
       themes: Array.isArray(data.settings.themes) ? data.settings.themes : saved.themes,
       relevance_levels: Array.isArray(data.settings.relevance_levels) ? data.settings.relevance_levels : saved.relevance_levels,
+      note_types: Array.isArray(data.settings.note_types) && data.settings.note_types.length > 0
+        ? data.settings.note_types
+        : saved.note_types,
       updated_at: new Date().toISOString(),
     })
   }

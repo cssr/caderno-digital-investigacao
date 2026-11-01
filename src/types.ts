@@ -144,6 +144,7 @@ export interface AppSettings {
   id: string
   themes: string[]
   relevance_levels: string[]
+  note_types: string[]
   updated_at: string
 }
 

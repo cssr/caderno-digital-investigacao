@@ -4,6 +4,7 @@
 // ============================================================================
 import { db } from '../db'
 import type { AppSettings } from '../types'
+import { TIPOS_DE_NOTA } from '../types'
 
 /** Default configuration shown the first time the app is opened. */
 export const DEFAULT_SETTINGS: Omit<AppSettings, 'id' | 'updated_at'> = {
@@ -22,6 +23,7 @@ export const DEFAULT_SETTINGS: Omit<AppSettings, 'id' | 'updated_at'> = {
     'Secundário',
     'Baixa relevância',
   ],
+  note_types: [...TIPOS_DE_NOTA] as unknown as string[],
 }
 
 const SETTINGS_ID = 'app'
@@ -36,6 +38,7 @@ export async function getSettings(): Promise<AppSettings> {
     id: SETTINGS_ID,
     themes: [...DEFAULT_SETTINGS.themes],
     relevance_levels: [...DEFAULT_SETTINGS.relevance_levels],
+    note_types: [...DEFAULT_SETTINGS.note_types],
     updated_at: now,
   }
   await db.settings.add(record)
@@ -48,6 +51,7 @@ export async function saveSettings(next: Omit<AppSettings, 'id' | 'updated_at'>)
     id: SETTINGS_ID,
     themes: next.themes,
     relevance_levels: next.relevance_levels,
+    note_types: next.note_types,
     updated_at: new Date().toISOString(),
   }
   await db.settings.put(record)
