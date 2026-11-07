@@ -25,40 +25,68 @@ export default function SiteSettings() {
     })
   }, [])
 
+  // Persist the current lists to IndexedDB after every change so they survive
+  // navigation. The settings component unmounts/remounts when switching
+  // sections (App renders it only for `section === 'settings'`); without
+  // immediate persistence the state would reset to what's stored on load.
+  async function persist(
+    nextThemes: string[],
+    nextLevels: string[],
+    nextNoteTypes: string[]
+  ) {
+    try {
+      await saveSettings({ themes: nextThemes, relevance_levels: nextLevels, note_types: nextNoteTypes })
+    } catch (err: any) {
+      setMessage('Erro ao guardar configuracoes: ' + err.message)
+    }
+  }
+
   function addTheme(e: React.FormEvent) {
     e.preventDefault()
     const value = themeInput.trim()
     if (!value || themes.includes(value)) return
-    setThemes([...themes, value])
+    const next = [...themes, value]
+    setThemes(next)
     setThemeInput('')
+    void persist(next, levels, noteTypes)
   }
 
   function removeTheme(value: string) {
-    setThemes(themes.filter((t) => t !== value))
+    const next = themes.filter((t) => t !== value)
+    setThemes(next)
+    void persist(next, levels, noteTypes)
   }
 
   function addLevel(e: React.FormEvent) {
     e.preventDefault()
     const value = levelInput.trim()
     if (!value || levels.includes(value)) return
-    setLevels([...levels, value])
+    const next = [...levels, value]
+    setLevels(next)
     setLevelInput('')
+    void persist(themes, next, noteTypes)
   }
 
   function removeLevel(value: string) {
-    setLevels(levels.filter((l) => l !== value))
+    const next = levels.filter((l) => l !== value)
+    setLevels(next)
+    void persist(themes, next, noteTypes)
   }
 
   function addNoteType(e: React.FormEvent) {
     e.preventDefault()
     const value = noteTypeInput.trim()
     if (!value || noteTypes.includes(value)) return
-    setNoteTypes([...noteTypes, value])
+    const next = [...noteTypes, value]
+    setNoteTypes(next)
     setNoteTypeInput('')
+    void persist(themes, levels, next)
   }
 
   function removeNoteType(value: string) {
-    setNoteTypes(noteTypes.filter((t) => t !== value))
+    const next = noteTypes.filter((t) => t !== value)
+    setNoteTypes(next)
+    void persist(themes, levels, next)
   }
 
   async function save(e: React.FormEvent) {
