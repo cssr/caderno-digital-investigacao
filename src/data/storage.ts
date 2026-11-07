@@ -17,6 +17,7 @@ import {
   A_CONFIRMAR_OPTIONS,
   ORIGEM_OPTIONS,
 } from '../types'
+import { blobToBase64, base64ToBlob } from '../utils'
 
 interface SheetMeta {
   name: CollectionName
@@ -82,19 +83,25 @@ export async function buildAllCSV(): Promise<string> {
   return blocks.join('\n')
 }
 
-/** Serialize every collection into a single JSON backup object. */
+/** Serialize every collection into a single JSON backup object.
+ *  Includes data, settings, uploaded PDFs (as base64) and PDF annotations,
+ *  so a backup is a complete copy of the caderno. */
 export async function buildJSONBackup(): Promise<string> {
   const payload: Record<string, any[]> = {}
   for (const sheet of SHEETS) {
     payload[sheet.label] = await db[sheet.name].toArray()
   }
   const settings = await getSettingsWithDefaults()
+  const pdfs = await db.pdfs.toArray()
+  const annotations = await db.annotations.toArray()
   const backup = {
     app: 'caderno-digital-investigacao',
     version: 1,
     exported_at: new Date().toISOString(),
     data: payload,
     settings: { themes: settings.themes, relevance_levels: settings.relevance_levels, note_types: settings.note_types },
+    pdfs: await Promise.all(pdfs.map(async (p) => ({ ...p, blob: await blobToBase64(p.blob) }))),
+    annotations,
   }
   return JSON.stringify(backup, null, 2)
 }
@@ -165,6 +172,17 @@ export async function importJSONBackup(json: string): Promise<{ imported: Record
         : saved.note_types,
       updated_at: new Date().toISOString(),
     })
+  }
+  if (data.pdfs) {
+    await db.pdfs.clear()
+    const now = new Date().toISOString()
+    for (const p of data.pdfs as any[]) {
+      await db.pdfs.add({ ...p, blob: base64ToBlob(p.blob ?? '', 'application/pdf'), created_at: p.created_at ?? now })
+    }
+  }
+  if (data.annotations) {
+    await db.annotations.clear()
+    await db.annotations.bulkAdd(data.annotations as any[])
   }
   return { imported }
 }

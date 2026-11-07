@@ -104,3 +104,22 @@ export function norm(s: string | null | undefined): string {
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')
 }
+
+/** Convert a Blob to a base64 data URL (used to persist PDFs in JSON backups). */
+export function blobToBase64(blob: Blob): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onload = () => resolve(String(reader.result))
+    reader.onerror = reject
+    reader.readAsDataURL(blob)
+  })
+}
+
+/** Rebuild a Blob from a base64 data URL or plain base64 string. */
+export function base64ToBlob(b64: string, mimeType: string): Blob {
+  const raw = b64.includes(';base64') ? b64.split(',')[1] ?? b64 : b64
+  const binary = atob(raw)
+  const bytes = new Uint8Array(binary.length)
+  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i)
+  return new Blob([bytes], { type: mimeType })
+}
